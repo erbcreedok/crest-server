@@ -1,9 +1,11 @@
-let playerIncrement = 0;
+const generateRandomId = require('../../helpers/generateRandomId')
 
 class Player {
-  constructor(name) {
+  constructor(name, ip, room) {
     this.name = name;
-    this.id = ++playerIncrement;
+    this.ip = ip;
+    this.room = room;
+    this.id = generateRandomId(4);
   }
 }
 

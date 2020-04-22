@@ -8,11 +8,18 @@ const validator = require('express-validator')
 const app = express()
 const server = require('http').Server(app)
 const io = socket(server)
+const session = require('express-session')
 
 const port = process.env.PORT || 3000
 const route = require('./app/routes')
 
-app.use(cors())
+app.use(cors({origin: ['*', 'http://localhost:8080'], credentials: true}))
+app.use(session({
+  secret: 'crest-online',
+  resave: true,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
 app.use((req,res,next) => {
   req.io = io
   next()
@@ -20,6 +27,8 @@ app.use((req,res,next) => {
 app.use(bodyParser.json())
 app.use(validator())
 app.use(route)
+
+require('./app/socket')(io);
 
 server.listen(port, () => {
   console.log('Listening on '+port)

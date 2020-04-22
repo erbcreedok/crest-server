@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.16.4",
+    "express-session": "^1.17.1",
     "express-validator": "^5.3.1",
     "jsonwebtoken": "^8.4.0",
     "nodemon": "^1.18.9",
