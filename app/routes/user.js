@@ -1,13 +1,12 @@
 const express = require('express')
 const router = express.Router()
 const Player = require('../game/players/Player')
-const Room = require('../game/rooms/Room')
 const playerService = require('../game/players/player.service')
 const roomService = require('../game/rooms/room.service')
+const createNewRoom = require('../game/rooms/createNewRoom')
 
 router.get('/user', (req, res) => {
-  const sessionId = req.session.id;
-  console.log({sessionId});
+  const sessionId = req.session ? req.session.id : undefined;
   const player = playerService.findPlayerByIp(sessionId);
   res.json(player);
 })
@@ -28,16 +27,13 @@ router.post('/user',(req,res) => {
       });
     }
   } else {
-    room = new Room(`${req.body.name}'s room`);
-    roomService.addNewRoom(room);
+    room = createNewRoom(`${req.body.name}'s room`, req.io);
   }
-  const sessionId = req.session.id;
+  const sessionId = req.session ? req.session.id : undefined;
   const player = new Player(req.body.name, sessionId, room.id);
   room.addPlayer(player);
-  req.io.to(room.id).emit('notification', {message: `Player ${player.name} has joined room`});
   playerService.addNewPlayer(player);
-  res.json(player)
-  console.log(playerService.players)
+  res.json(player.playerPersonalData)
 })
 
 module.exports = router
