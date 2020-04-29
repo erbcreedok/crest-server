@@ -13,7 +13,7 @@ const session = require('express-session')
 const port = process.env.PORT || 3000
 const route = require('./app/routes')
 
-app.use(cors({origin: ['*', 'http://localhost:8080', 'http://192.168.0.19:8080'], credentials: true}))
+app.use(cors({origin: ['*', 'http://localhost:8080', 'http://192.168.0.19:8080', 'https://crest-client.herokuapp.com'], credentials: true}))
 app.use(session({
   secret: 'crest-online',
   resave: true,
