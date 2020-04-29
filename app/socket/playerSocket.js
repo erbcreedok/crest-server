@@ -1,4 +1,4 @@
-function playerSocket(socket, player, room) {
+function playerSocket(socket, io, player, room) {
   socket.on('get room data', (fn) => {
     fn(room.roomData);
   });
@@ -9,8 +9,26 @@ function playerSocket(socket, player, room) {
     player.setReady(data);
     fn(player.playerPersonalData);
   });
+  socket.on('send card', (card) => {
+    try {
+      player.onMove(card);
+      room.emitOnChange();
+    } catch (e) {
+      console.error(e);
+      socket.emit('exception', e.message)
+    }
+  });
+  socket.on('take card', () => {
+    try {
+      player.onTakeCard();
+      room.emitOnChange();
+    } catch (e) {
+      console.error(e);
+      socket.emit('exception', e.message)
+    }
+  });
   player.addChangeListener(player => {
-    socket.emit('player changed', player.playerPersonalData);
+    socket.emit('player update', player.playerPersonalData);
   });
 }
 

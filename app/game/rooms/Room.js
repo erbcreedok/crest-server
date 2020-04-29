@@ -8,13 +8,24 @@ class Room {
     this.players = [];
     this.state = 'idle';
     this.changeListeners = [];
-    this.game = null;
+    this.exceptionListeners = [];
+    this.game = new GameController();
+    this.startGame = this.startGame.bind(this);
+    this.finishGame = this.finishGame.bind(this);
     this.addChangeListener = this.addChangeListener.bind(this);
     this.emitOnChange = this.emitOnChange.bind(this);
+    this.addExceptionListener = this.addExceptionListener.bind(this);
+    this.throwException = this.throwException.bind(this);
     this.handlePlayerChange = this.handlePlayerChange.bind(this);
+  }
+  addExceptionListener(fn) {
+    this.exceptionListeners.push(fn)
   }
   addChangeListener(fn) {
     this.changeListeners.push(fn);
+  }
+  throwException(err) {
+    this.exceptionListeners.forEach(fn => fn(err, this));
   }
   emitOnChange() {
     this.changeListeners.forEach(fn => fn(this));
@@ -23,7 +34,7 @@ class Room {
     return {
       players: this.players.map(player => player.playerInfo),
       state: this.state,
-      game: this.game ? this.game.gameData : null,
+      game: this.game.gameData,
     }
   }
   get isEveryoneReady() {
@@ -43,9 +54,21 @@ class Room {
     this.emitOnChange();
   }
   startGame() {
-    this.state = 'starting';
-    const game = new GameController(this.players);
-    game.startNewGame();
+    try {
+      this.state = 'starting';
+      this.game.startNewGame(this.players);
+      this.game.addActionListener('finish', this.finishGame)
+      this.state = 'started';
+      this.emitOnChange();
+    } catch (e) {
+      this.state = 'idle'
+      this.throwException(e);
+    }
+  }
+  finishGame() {
+    this.state = 'idle'
+    this.players.forEach(player => player.reset())
+    this.game.resetGame();
     this.emitOnChange();
   }
 }

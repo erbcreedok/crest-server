@@ -7,6 +7,7 @@ const createNewRoom = require('../game/rooms/createNewRoom')
 
 router.get('/user', (req, res) => {
   const sessionId = req.session ? req.session.id : undefined;
+  console.log(sessionId);
   const player = playerService.findPlayerByIp(sessionId);
   res.json(player);
 })
@@ -30,6 +31,7 @@ router.post('/user',(req,res) => {
     room = createNewRoom(`${req.body.name}'s room`, req.io);
   }
   const sessionId = req.session ? req.session.id : undefined;
+  console.log('we here', sessionId);
   const player = new Player(req.body.name, sessionId, room.id);
   room.addPlayer(player);
   playerService.addNewPlayer(player);

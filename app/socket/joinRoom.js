@@ -2,7 +2,7 @@ const roomService = require('../game/rooms/room.service')
 const playerService = require('../game/players/player.service')
 const playerSocket = require('./playerSocket')
 
-function joinRoom(socket) {
+function joinRoom(socket, io) {
   if (!(socket.handshake.query && socket.handshake.query.room && socket.handshake.query.user)) {
     socket.emit('exception', {message: 'Please provide room and user'});
     return;
@@ -18,7 +18,7 @@ function joinRoom(socket) {
   socket.on('disconnect', () => {
     player.setConnected(false);
   })
-  playerSocket(socket, player, room);
+  playerSocket(socket, io, player, room);
 }
 
 module.exports = joinRoom;
