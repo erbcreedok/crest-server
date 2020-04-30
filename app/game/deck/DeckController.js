@@ -4,7 +4,11 @@ const DeckController =  {
     return this.shuffleDeck([...this.deck])
   },
   shuffleDeck: function(deck, method='basic') {
-    return deck.sort(() => Math.floor(Math.random() * 2) === 1);
+    if (method === 'basic') {
+      return deck.sort(() => Math.floor(Math.random() * 2) - 1);
+    } else {
+      return this.shuffleDeck(deck);
+    }
   }
 };
 

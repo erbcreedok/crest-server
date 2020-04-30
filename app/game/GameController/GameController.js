@@ -166,7 +166,7 @@ class GameController {
   distributeCards() {
     const deck = DeckController.getNewDeck();
     deck.forEach((card, index) => {
-      this.players[index % this.players.length].addCard(card);
+      this.activePlayers[index % this.activePlayers.length].addCard(card);
     });
   }
 
