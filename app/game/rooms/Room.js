@@ -58,6 +58,7 @@ class Room {
       this.state = 'starting';
       this.game.startNewGame(this.players);
       this.game.addActionListener('finish', this.finishGame)
+      this.game.addActionListener('update', this.emitOnChange)
       this.state = 'started';
       this.emitOnChange();
     } catch (e) {

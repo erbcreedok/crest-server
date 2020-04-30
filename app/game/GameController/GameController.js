@@ -7,6 +7,7 @@ class GameController {
     this.players = []
     this.moveWay = {}
     this.desk = [];
+    this.beated = [];
     this.state = 'idle';
     this.actionListeners = [];
     this.addActionListener = this.addActionListener.bind(this);
@@ -29,6 +30,7 @@ class GameController {
   get gameData() {
     return {
       desk: this.desk,
+      beated: this.beated.length ? this.beated[this.beated.length - 1] : [],
       moveWay: this.moveWay,
       state: this.state,
       players: this.players.map(p => p.playerInfo),
@@ -53,6 +55,8 @@ class GameController {
       throw new Error('Max amount of players is 7');
     }
     this.players = players;
+    this.desk = [];
+    this.beated = [];
     players.forEach((player, index) => {
       this.moveWay[player.id] = players[(index+1) % players.length].playerInfo;
       player.setState('idle');
@@ -95,9 +99,15 @@ class GameController {
         }
         player.removeCard(card);
         this.desk.push(card);
+        player.setState('idle');
         if (this.desk.length === this.activePlayers.length) {
-          this.desk = [];
-          this.handleEmptyDesk();
+          setTimeout(() => {
+            this.beated.push(this.desk);
+            this.desk = [];
+            this.handleEmptyDesk();
+            this.setActivePlayer(player);
+            this.emitAction('update');
+          }, 1500);
         } else {
           this.setNextTurn(player);
         }
@@ -132,6 +142,7 @@ class GameController {
     this.moveWay = {}
     this.players = []
     this.desk = []
+    this.beated = []
     this.actionListeners = []
   }
 
