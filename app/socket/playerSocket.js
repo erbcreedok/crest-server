@@ -1,4 +1,9 @@
 function playerSocket(socket, io, player, room) {
+  socket.on('start room game', () => {
+    if (room.adminId === player.id) {
+      room.handleStartGame();
+    }
+  });
   socket.on('get room data', (fn) => {
     fn(room.roomData);
   });

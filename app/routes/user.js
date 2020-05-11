@@ -1,16 +1,16 @@
-const express = require('express')
-const router = express.Router()
-const Player = require('../game/players/Player')
-const playerService = require('../game/players/player.service')
-const roomService = require('../game/rooms/room.service')
-const createNewRoom = require('../game/rooms/createNewRoom')
+const express = require('express');
+const router = express.Router();
+const Player = require('../game/players/Player');
+const playerService = require('../game/players/player.service');
+const roomService = require('../game/rooms/room.service');
+const createNewRoom = require('../game/rooms/createNewRoom');
 
 router.get('/user', (req, res) => {
   const sessionId = req.session ? req.session.id : undefined;
   console.log(sessionId);
   const player = playerService.findPlayerByIp(sessionId);
   res.json(player);
-})
+});
 
 router.post('/user',(req,res) => {
   if (!(req.body && req.body.name)) {
@@ -27,6 +27,7 @@ router.post('/user',(req,res) => {
         message: `Room does not exist!`
       });
     }
+
   } else {
     room = createNewRoom(`${req.body.name}'s room`, req.io);
   }
@@ -36,6 +37,6 @@ router.post('/user',(req,res) => {
   room.addPlayer(player);
   playerService.addNewPlayer(player);
   res.json(player.playerPersonalData)
-})
+});
 
-module.exports = router
+module.exports = router;

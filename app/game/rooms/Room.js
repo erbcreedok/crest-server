@@ -1,5 +1,5 @@
-const generateRandomId = require('../../helpers/generateRandomId')
-const GameController = require('../GameController/GameController')
+const generateRandomId = require('../../helpers/generateRandomId');
+const GameController = require('../GameController/GameController');
 
 class Room {
   constructor(name) {
@@ -30,45 +30,53 @@ class Room {
   emitOnChange() {
     this.changeListeners.forEach(fn => fn(this));
   }
+  get adminId() {
+    const admin = this.players.filter(p => p.isConnected)[0];
+    if (admin) {
+      return admin.id;
+    }
+  }
   get roomData() {
     return {
       players: this.players.map(player => player.playerInfo),
       state: this.state,
       game: this.game.gameData,
+      adminId: this.adminId,
     }
   }
-  get isEveryoneReady() {
-    return this.players.filter(p => p.isConnected).every(p => p.isReady);
+  get readyPlayers() {
+    return this.players.filter(p => p.isConnected && p.isReady);
   }
   addPlayer(player) {
-    player.addChangeListener(this.handlePlayerChange)
+    player.addChangeListener(this.handlePlayerChange);
     this.players.push(player);
     this.emitOnChange();
   }
   handlePlayerChange() {
+    this.emitOnChange();
+  }
+  handleStartGame() {
     if (this.state === 'idle') {
-      if (this.isEveryoneReady) {
-        this.startGame();
-      }
+      this.startGame();
     }
     this.emitOnChange();
   }
   startGame() {
     try {
       this.state = 'starting';
-      this.game.startNewGame(this.players);
-      this.game.addActionListener('finish', this.finishGame)
-      this.game.addActionListener('update', this.emitOnChange)
+      this.game.startNewGame(this.readyPlayers);
+      this.game.addActionListener('finish', this.finishGame);
+      this.game.addActionListener('update', this.emitOnChange);
       this.state = 'started';
       this.emitOnChange();
     } catch (e) {
-      this.state = 'idle'
+      this.state = 'idle';
       this.throwException(e);
     }
   }
   finishGame() {
-    this.state = 'idle'
-    this.players.forEach(player => player.reset())
+    this.state = 'idle';
+    this.players.forEach(player => player.reset());
     this.game.resetGame();
     this.emitOnChange();
   }
