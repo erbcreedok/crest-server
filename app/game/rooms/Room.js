@@ -17,6 +17,7 @@ class Room {
     this.addExceptionListener = this.addExceptionListener.bind(this);
     this.throwException = this.throwException.bind(this);
     this.handlePlayerChange = this.handlePlayerChange.bind(this);
+    this.handleStartGame = this.handleStartGame.bind(this);
   }
   addExceptionListener(fn) {
     this.exceptionListeners.push(fn)
@@ -46,6 +47,9 @@ class Room {
   }
   get readyPlayers() {
     return this.players.filter(p => p.isConnected && p.isReady);
+  }
+  findPlayerByName(playerName) {
+    return this.players.find(p => p.name === playerName)
   }
   addPlayer(player) {
     player.addChangeListener(this.handlePlayerChange);

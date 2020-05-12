@@ -1,8 +1,12 @@
-const generateRandomId = require('../../helpers/generateRandomId')
+const generateRandomId = require('../../helpers/generateRandomId');
+const getRandomFromArray = require('../../helpers/getRandomFromArray');
+const avatars = require('./avatars');
+
 
 class Player {
   constructor(name, ip, room) {
     this.name = name;
+    this.emoji = getRandomFromArray(avatars);
     this.ip = ip;
     this.room = room;
     this.cards = [];
@@ -54,10 +58,15 @@ class Player {
       isConnected: this.isConnected,
       firstWinCount: this.firstWinCount,
       loseCount: this.loseCount,
+      emoji: this.emoji,
     }
   }
   get playerPersonalData() {
     return {...this};
+  }
+  setEmoji(emoji) {
+    this.emoji = emoji;
+    this.emitOnChange();
   }
   reset() {
     this.state = 'wait';

@@ -1,11 +1,11 @@
-const DeckController = require('../deck/DeckController')
-const canBeat = require('./canBeat')
+const DeckController = require('../deck/DeckController');
+const canBeat = require('./canBeat');
 
 class GameController {
 
   constructor() {
-    this.players = []
-    this.moveWay = {}
+    this.players = [];
+    this.moveWay = {};
     this.desk = [];
     this.beated = [];
     this.state = 'idle';
@@ -57,6 +57,7 @@ class GameController {
     this.players = players;
     this.desk = [];
     this.beated = [];
+    this.moveWay = {};
     players.forEach((player, index) => {
       this.moveWay[player.id] = players[(index+1) % players.length].playerInfo;
       player.setState('idle');
@@ -134,20 +135,20 @@ class GameController {
   }
 
   handleGameOver() {
-    this.state = 'finish'
+    this.state = 'finish';
     this.emitAction('finish');
   }
 
   resetGame() {
-    this.moveWay = {}
-    this.players = []
-    this.desk = []
-    this.beated = []
-    this.actionListeners = []
+    this.moveWay = {};
+    this.players = [];
+    this.desk = [];
+    this.beated = [];
+    this.actionListeners = [];
   }
 
   setPlayerWin(player) {
-    const isFirst = this.players.every(player => player.state !== 'win')
+    const isFirst = this.players.every(player => player.state !== 'win');
     player.setWin(isFirst);
     if (this.activePlayers.length === 1) {
       this.activePlayers[0].setLose();
@@ -155,8 +156,8 @@ class GameController {
     }
   }
   setActivePlayer(player) {
-    this.activePlayers.forEach(player => player.setState('idle'))
-    player.setState('turn')
+    this.activePlayers.forEach(player => player.setState('idle'));
+    player.setState('turn');
     if (player.cardsCount === 0) {
       player.onTakeCard();
       this.setNextTurn(player);
@@ -166,7 +167,7 @@ class GameController {
   distributeCards() {
     const deck = DeckController.getNewDeck();
     deck.forEach((card, index) => {
-      this.activePlayers[index % this.activePlayers.length].addCard(card);
+      this.players[index % this.players.length].addCard(card);
     });
   }
 
