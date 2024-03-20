@@ -10,10 +10,10 @@ const server = require('http').Server(app)
 const io = socket(server)
 const session = require('express-session')
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3333
 const route = require('./app/routes')
 
-app.use(cors({origin: JSON.parse(process.env.CORS_ALLOWED || '[]'), credentials: true}))
+app.use(cors({origin: JSON.parse(process.env.CORS_ALLOWED || '["http://192.168.0.17:8080", "http://localhost:8080"]'), credentials: true}))
 app.use(session({
   secret: 'crest-online',
   resave: true,
